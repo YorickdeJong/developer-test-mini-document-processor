@@ -1,6 +1,5 @@
-import DocumentProcessor from "@/components/DocumentProcessor";
+import RulesWorkbench from "@/components/RulesWorkbench";
 
 export default function HomePage() {
-  return <DocumentProcessor />;
+  return <RulesWorkbench />;
 }
-

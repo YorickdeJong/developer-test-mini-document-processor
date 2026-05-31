@@ -1,0 +1,8 @@
+[
+  { "code": "ACME", "name": "ACME Foods", "region": "NL" },
+  { "code": "NORD", "name": "Nordsee Retail", "region": "DE" },
+  { "code": "GREEN", "name": "Green Valley Produce", "region": "IT" },
+  { "code": "DWF", "name": "De Wit Flowers", "region": "NL" },
+  { "code": "BHC", "name": "Baltic Hardware Co.", "region": "PL" }
+]
+

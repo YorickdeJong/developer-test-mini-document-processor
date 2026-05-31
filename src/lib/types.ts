@@ -1,37 +1,65 @@
-export type SourceDocument = {
+export type Severity = "error" | "warning";
+
+export type Order = {
   id: string;
-  fileName: string;
-  receivedAt: string;
-  rawText: string;
+  [key: string]: unknown;
 };
 
-export type ExtractedFields = {
-  customer?: string;
-  referenceNumber?: string;
-  pickupDate?: string;
-  deliveryAddress?: string;
-  weightKg?: number | string;
+export type Customer = {
+  code: string;
+  name: string;
+  region: string;
 };
 
-export type DocumentStatus = "new" | "needs_review" | "ready" | "exported";
-
-export type DocumentRecord = {
-  source: SourceDocument;
-  fields: ExtractedFields;
-  approved: boolean;
-  exported: boolean;
-  reviewNote: string;
+export type RuleCondition = {
+  path: string;
+  equals: unknown;
 };
 
-export type ValidationIssue = {
-  field: keyof ExtractedFields;
+type BaseRule = {
+  id: string;
+  path: string;
+  severity: Severity;
   message: string;
-  severity: "error" | "warning";
+  when?: RuleCondition;
 };
 
-export type ValidationResult = {
-  valid: boolean;
-  issues: ValidationIssue[];
+export type RequiredRule = BaseRule & {
+  type: "required";
 };
 
-export type FieldName = keyof ExtractedFields;
+export type MinRule = BaseRule & {
+  type: "min";
+  value: number;
+};
+
+export type MaxRule = BaseRule & {
+  type: "max";
+  value: number;
+};
+
+export type OneOfRule = BaseRule & {
+  type: "oneOf";
+  values: unknown[];
+};
+
+export type Rule = RequiredRule | MinRule | MaxRule | OneOfRule;
+
+export type RuleResult = {
+  ruleId: string;
+  path: string;
+  type: Rule["type"];
+  severity: Severity;
+  status: "pass" | "fail" | "skipped" | "unsupported";
+  message: string;
+  actual: unknown;
+};
+
+export type OrderStatus = "valid" | "warning" | "blocked";
+
+export type OrderEvaluation = {
+  orderId: string;
+  status: OrderStatus;
+  results: RuleResult[];
+};
+

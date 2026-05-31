@@ -241,6 +241,17 @@ pre {
   white-space: pre-wrap;
 }
 
+.json-editor {
+  background: #172026;
+  border: 0;
+  border-radius: 8px;
+  color: #f8f5ef;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  min-height: 420px;
+  resize: vertical;
+  width: 100%;
+}
+
 .form-grid {
   display: grid;
   gap: 12px;
@@ -307,6 +318,63 @@ textarea {
   display: block;
 }
 
+.issue-list code {
+  color: inherit;
+  font-size: 12px;
+}
+
+.table-wrap {
+  overflow: auto;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 13px;
+  width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid #eadfce;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: #465553;
+  font-weight: 800;
+}
+
+.result {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 7px;
+  text-transform: uppercase;
+}
+
+.result.pass {
+  background: #e0f5e7;
+  color: #1d6b3f;
+}
+
+.result.fail {
+  background: #fff0ed;
+  color: #8c2517;
+}
+
+.result.skipped {
+  background: #e7eef7;
+  color: #24517b;
+}
+
+.result.unsupported {
+  background: #fff1cc;
+  color: #8a5d00;
+}
+
 .empty {
   background: #f6f3ed;
   border-radius: 6px;
@@ -336,24 +404,36 @@ textarea {
   white-space: nowrap;
 }
 
-.status.new {
-  background: #e7eef7;
-  color: #24517b;
-}
-
-.status.needs_review {
-  background: #fff1cc;
-  color: #8a5d00;
-}
-
-.status.ready {
+.status.valid {
   background: #e0f5e7;
   color: #1d6b3f;
 }
 
-.status.exported {
-  background: #ece8ff;
-  color: #514293;
+.status.warning {
+  background: #fff1cc;
+  color: #8a5d00;
+}
+
+.status.blocked {
+  background: #fff0ed;
+  color: #8c2517;
+}
+
+.notes-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  margin-top: 20px;
+}
+
+.plain-list {
+  color: #465553;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.plain-list li + li {
+  margin-top: 6px;
 }
 
 @media (max-width: 1050px) {
@@ -362,7 +442,8 @@ textarea {
   }
 
   .workspace,
-  .document-grid {
+  .document-grid,
+  .notes-grid {
     grid-template-columns: 1fr;
   }
 

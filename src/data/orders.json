@@ -1,0 +1,101 @@
+[
+  {
+    "id": "order_001",
+    "customerCode": "ACME",
+    "reference": "PO-7781",
+    "pickupDate": "2026-06-03",
+    "serviceLevel": "standard",
+    "temperature": "ambient",
+    "weightKg": 1240,
+    "pallets": 4,
+    "addresses": {
+      "pickup": { "postcode": "1011 AB", "city": "Amsterdam" },
+      "delivery": { "postcode": "3011 AA", "city": "Rotterdam" }
+    }
+  },
+  {
+    "id": "order_002",
+    "customerCode": "NORD",
+    "reference": "",
+    "pickupDate": "2026-06-04",
+    "serviceLevel": "standard",
+    "temperature": "ambient",
+    "weightKg": 890,
+    "pallets": 2,
+    "addresses": {
+      "pickup": { "postcode": "9711 PT", "city": "Groningen" },
+      "delivery": { "postcode": "20095", "city": "Hamburg" }
+    }
+  },
+  {
+    "id": "order_003",
+    "customerCode": "UNKNOWN",
+    "reference": "XJ-19-ALPHA",
+    "pickupDate": "2026-06-05",
+    "serviceLevel": "standard",
+    "temperature": "ambient",
+    "weightKg": 400,
+    "pallets": 1,
+    "addresses": {
+      "pickup": { "postcode": "75008", "city": "Paris" },
+      "delivery": { "postcode": "69002", "city": "Lyon" }
+    }
+  },
+  {
+    "id": "order_004",
+    "customerCode": "GREEN",
+    "reference": "GVP-88213",
+    "pickupDate": "2026-06-02",
+    "serviceLevel": "standard",
+    "temperature": "ambient",
+    "weightKg": -12,
+    "pallets": 3,
+    "addresses": {
+      "pickup": { "postcode": "20121", "city": "Milan" },
+      "delivery": { "postcode": "", "city": "Bologna" }
+    }
+  },
+  {
+    "id": "order_005",
+    "customerCode": "DWF",
+    "reference": "DWF-5520",
+    "pickupDate": "2026-06-04",
+    "serviceLevel": "temperature_controlled",
+    "temperature": "",
+    "weightKg": 315,
+    "pallets": 1,
+    "addresses": {
+      "pickup": { "postcode": "1431 GD", "city": "Aalsmeer" },
+      "delivery": { "postcode": "E1 6AN", "city": "London" }
+    }
+  },
+  {
+    "id": "order_006",
+    "customerCode": "BHC",
+    "reference": "BHC-9910",
+    "pickupDate": "2026/06/05",
+    "serviceLevel": "hazmat",
+    "temperature": "ambient",
+    "weightKg": 2100,
+    "pallets": 8,
+    "addresses": {
+      "pickup": { "postcode": "80-831", "city": "Gdansk" },
+      "delivery": { "postcode": "10245", "city": "Berlin" }
+    }
+  },
+  {
+    "id": "order_007",
+    "customerCode": "ACME",
+    "reference": "PO-7799",
+    "pickupDate": "2026-06-08",
+    "serviceLevel": "temperature_controlled",
+    "temperature": "chilled",
+    "weightKg": 27500,
+    "pallets": 22,
+    "addresses": {
+      "pickup": { "postcode": "1011 AB", "city": "Amsterdam" },
+      "delivery": { "postcode": "28013", "city": "Madrid" }
+    }
+  }
+]
+

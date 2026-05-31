@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Mini Document Processor",
-  description: "Developer test starter for processing messy logistics documents.",
+  title: "Rules Engine Workbench",
+  description: "Developer test starter for validating extracted logistics orders.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -13,4 +13,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-

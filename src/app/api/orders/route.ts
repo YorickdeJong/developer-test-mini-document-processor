@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { listDocumentRecords } from "@/server/documents";
+import { listStoredOrders } from "@/server/orderStore";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET() {
-  return NextResponse.json(await listDocumentRecords());
+  return NextResponse.json(await listStoredOrders());
 }
 

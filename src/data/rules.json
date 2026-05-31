@@ -1,0 +1,79 @@
+[
+  {
+    "id": "customer-required",
+    "type": "required",
+    "path": "customerCode",
+    "severity": "error",
+    "message": "Customer code is required."
+  },
+  {
+    "id": "known-customer",
+    "type": "oneOf",
+    "path": "customerCode",
+    "values": ["ACME", "NORD", "GREEN", "DWF", "BHC"],
+    "severity": "error",
+    "message": "Customer code must exist in the customer list."
+  },
+  {
+    "id": "reference-required",
+    "type": "required",
+    "path": "reference",
+    "severity": "error",
+    "message": "Reference is required before export."
+  },
+  {
+    "id": "pickup-date-required",
+    "type": "required",
+    "path": "pickupDate",
+    "severity": "error",
+    "message": "Pickup date is required."
+  },
+  {
+    "id": "delivery-postcode-required",
+    "type": "required",
+    "path": "addresses.delivery.postcode",
+    "severity": "error",
+    "message": "Delivery postcode is required."
+  },
+  {
+    "id": "weight-positive",
+    "type": "min",
+    "path": "weightKg",
+    "value": 1,
+    "severity": "error",
+    "message": "Weight must be greater than zero."
+  },
+  {
+    "id": "weight-max",
+    "type": "max",
+    "path": "weightKg",
+    "value": 25000,
+    "severity": "warning",
+    "message": "Orders above 25,000 kg need manual capacity review."
+  },
+  {
+    "id": "pallets-positive",
+    "type": "min",
+    "path": "pallets",
+    "value": 1,
+    "severity": "error",
+    "message": "At least one pallet is required."
+  },
+  {
+    "id": "temperature-known",
+    "type": "oneOf",
+    "path": "temperature",
+    "values": ["ambient", "chilled", "frozen"],
+    "severity": "warning",
+    "message": "Temperature must be ambient, chilled, or frozen."
+  },
+  {
+    "id": "temperature-controlled-needs-temperature",
+    "type": "required",
+    "path": "temperature",
+    "severity": "error",
+    "message": "Temperature-controlled orders need a temperature value.",
+    "when": { "path": "serviceLevel", "equals": "temperature_controlled" }
+  }
+]
+

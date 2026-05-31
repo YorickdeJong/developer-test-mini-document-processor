@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
-import { resetDatabase } from "@/server/db";
+import { resetStoredOrders } from "@/server/orderStore";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function POST() {
-  await resetDatabase();
-  return NextResponse.json({ ok: true });
+  return NextResponse.json(await resetStoredOrders());
 }
-
