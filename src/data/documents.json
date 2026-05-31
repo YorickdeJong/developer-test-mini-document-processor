@@ -1,0 +1,39 @@
+[
+  {
+    "id": "doc-001",
+    "fileName": "acme-booking-email.txt",
+    "receivedAt": "2026-05-31T08:42:00Z",
+    "rawText": "Subject: Booking request ACME / REF PO-7781\n\nHi team,\nPlease arrange pickup for ACME Foods tomorrow 2026-06-01.\nDelivery: 18 Harbour Road, Rotterdam.\nTotal weight: 1240 kg.\nReference: PO-7781\nNotes: driver needs tail lift."
+  },
+  {
+    "id": "doc-002",
+    "fileName": "nordsee-forwarded-order.txt",
+    "receivedAt": "2026-05-31T09:10:00Z",
+    "rawText": "FW: transport needed\n\nCustomer = Nordsee Retail\nRef no: NS-2026-441\nPickup date: 02/06/2026\nShip to: Leipziger Strasse 41, Hamburg\nWeight 890kg\nPlease confirm before 15:00."
+  },
+  {
+    "id": "doc-003",
+    "fileName": "missing-customer-request.txt",
+    "receivedAt": "2026-05-31T09:35:00Z",
+    "rawText": "Can you book this one?\nReference: XJ-19-ALPHA\nPickup: 2026-06-03\nDelivery address: Rue de Lyon 88, Paris\nWeight: 400 kg\nCustomer name is not in the email thread."
+  },
+  {
+    "id": "doc-004",
+    "fileName": "bad-date-weight.txt",
+    "receivedAt": "2026-05-31T10:05:00Z",
+    "rawText": "Order for Green Valley Produce\nBooking code GVP-88213\nPickup date: soon, preferably next week\nDeliver to: Via Milano 12, Bologna\nWeight: several pallets, exact kg unknown"
+  },
+  {
+    "id": "doc-005",
+    "fileName": "mixed-language-order.txt",
+    "receivedAt": "2026-05-31T10:40:00Z",
+    "rawText": "Klant: De Wit Flowers\nReferentie: DWF-5520\nOphaaldatum: 2026-06-04\nAfleveradres: 22 Market Lane, London\nGewicht: 315 kg\nLet op: gekoeld transport."
+  },
+  {
+    "id": "doc-006",
+    "fileName": "warehouse-note.txt",
+    "receivedAt": "2026-05-31T11:15:00Z",
+    "rawText": "Warehouse copied us on this note:\nClient: Baltic Hardware Co.\nDelivery should go to: Ul. Dluga 7, Gdansk\nPickup date 2026/06/05\nRef: BHC-9910\nGross weight - 2100 KG\nForklift available at destination."
+  }
+]
+
