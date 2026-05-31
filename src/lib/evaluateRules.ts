@@ -56,7 +56,8 @@ export function evaluateRule(order: Order, rule: Rule): RuleResult {
     );
   }
 
-  // Interview task: add support for max, oneOf, stronger date checks, and nested paths.
+  // Interview task: add support for max, length, oneOf, regex, date, number,
+  // conditional explanations, and nested paths.
   return baseResult(rule, "unsupported", actual, `Rule type "${rule.type}" is not implemented yet.`);
 }
 
@@ -94,4 +95,3 @@ function baseResult(
 function isBlank(value: unknown) {
   return value === undefined || value === null || String(value).trim() === "";
 }
-

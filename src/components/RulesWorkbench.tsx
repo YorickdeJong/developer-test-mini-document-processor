@@ -1,62 +1,71 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import seedCustomers from "@/data/customers.json";
 import seedOrders from "@/data/orders.json";
 import seedRules from "@/data/rules.json";
-import { buildExportPayload } from "@/lib/exportOrders";
-import { evaluateOrder } from "@/lib/evaluateRules";
-import type { Customer, Order, OrderEvaluation, OrderStatus, Rule } from "@/lib/types";
+import { evaluateOrders } from "@/lib/evaluateRules";
+import type { Customer, Order, OrderEvaluation, Rule, RuleType, Severity } from "@/lib/types";
 
-const initialOrders = seedOrders as Order[];
-const rules = seedRules as Rule[];
+const starterOrdersJson = JSON.stringify(seedOrders, null, 2);
+const starterRulesJson = JSON.stringify(seedRules, null, 2);
 const customers = seedCustomers as Customer[];
 
+const ruleTypes: RuleType[] = [
+  "required",
+  "number",
+  "min",
+  "max",
+  "minLength",
+  "maxLength",
+  "oneOf",
+  "regex",
+  "date",
+];
+
+const severities: Severity[] = ["error", "warning"];
+type Tab = "rules" | "input" | "results";
+
 export default function RulesWorkbench() {
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [selectedId, setSelectedId] = useState(initialOrders[0]?.id);
-  const [draftJson, setDraftJson] = useState(
-    JSON.stringify(initialOrders[0] ?? {}, null, 2),
-  );
-  const [jsonError, setJsonError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<Tab>("rules");
+  const [rulesJson, setRulesJson] = useState(starterRulesJson);
+  const [ordersJson, setOrdersJson] = useState(starterOrdersJson);
+  const [results, setResults] = useState<OrderEvaluation[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const evaluations = useMemo(
-    () => orders.map((order) => evaluateOrder(order, rules)),
-    [orders],
-  );
-  const selected = orders.find((order) => order.id === selectedId);
-  const selectedEvaluation = selected
-    ? evaluateOrder(selected, rules)
-    : undefined;
-  const exportPayload = useMemo(() => buildExportPayload(orders, rules), [orders]);
-  const counts = countStatuses(evaluations);
+  const counts = useMemo(() => {
+    if (!results) {
+      return { valid: 0, warning: 0, blocked: 0 };
+    }
 
-  function selectOrder(order: Order) {
-    setSelectedId(order.id);
-    setDraftJson(JSON.stringify(order, null, 2));
-    setJsonError(null);
-  }
+    return results.reduce(
+      (summary, item) => {
+        summary[item.status] += 1;
+        return summary;
+      },
+      { valid: 0, warning: 0, blocked: 0 },
+    );
+  }, [results]);
 
-  function applyJson() {
+  function runEvaluation() {
     try {
-      const parsed = JSON.parse(draftJson) as Order;
-      if (!parsed.id || typeof parsed.id !== "string") {
-        throw new Error("Order JSON must include a string id.");
-      }
+      const orders = parseJsonArray<Order>(ordersJson, "Input JSON");
+      const rules = parseJsonArray<Rule>(rulesJson, "Rules JSON");
 
-      setOrders((current) =>
-        current.map((order) => (order.id === selectedId ? parsed : order)),
-      );
-      setSelectedId(parsed.id);
-      setJsonError(null);
-    } catch (error) {
-      setJsonError(error instanceof Error ? error.message : "Invalid JSON.");
+      setResults(evaluateOrders(orders, rules));
+      setError(null);
+      setActiveTab("results");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Could not evaluate JSON.");
+      setResults(null);
     }
   }
 
-  function resetOrders() {
-    setOrders(initialOrders);
-    selectOrder(initialOrders[0]);
+  function resetStarterData() {
+    setRulesJson(starterRulesJson);
+    setOrdersJson(starterOrdersJson);
+    setResults(null);
+    setError(null);
   }
 
   return (
@@ -65,117 +74,212 @@ export default function RulesWorkbench() {
         <p className="eyebrow">Developer test starter</p>
         <h1>Rules Engine Workbench</h1>
         <p>
-          Validate extracted logistics orders before export. The app has local
-          JSON inputs, a partial TypeScript evaluator, and a starter UI. Improve
-          the rules engine and operator workflow until the export decision is
-          trustworthy.
+          Build a focused tool for configuring validation rules, testing extracted
+          order JSON, and reviewing which orders are ready for export.
         </p>
       </header>
 
-      <section className="summary-grid" aria-label="Order status summary">
+      <section className="toolbar" aria-label="Workbench controls">
+        <nav className="tabs" aria-label="Workbench sections">
+          <TabButton active={activeTab === "rules"} onClick={() => setActiveTab("rules")}>
+            Configure Rules
+          </TabButton>
+          <TabButton active={activeTab === "input"} onClick={() => setActiveTab("input")}>
+            Input JSON
+          </TabButton>
+          <TabButton active={activeTab === "results"} onClick={() => setActiveTab("results")}>
+            Results
+          </TabButton>
+        </nav>
+        <div className="button-row">
+          <button className="secondary" onClick={resetStarterData} type="button">
+            Reset
+          </button>
+          <button onClick={runEvaluation} type="button">
+            Evaluate
+          </button>
+        </div>
+      </section>
+
+      {error ? <p className="error-banner">{error}</p> : null}
+
+      <section className="workspace">
+        {activeTab === "rules" ? (
+          <RulesTab
+            rulesJson={rulesJson}
+            setRulesJson={setRulesJson}
+            ruleTypes={ruleTypes}
+          />
+        ) : null}
+
+        {activeTab === "input" ? (
+          <InputTab ordersJson={ordersJson} setOrdersJson={setOrdersJson} />
+        ) : null}
+
+        {activeTab === "results" ? (
+          <ResultsTab counts={counts} results={results} />
+        ) : null}
+      </section>
+    </main>
+  );
+}
+
+function RulesTab({
+  rulesJson,
+  setRulesJson,
+  ruleTypes,
+}: {
+  rulesJson: string;
+  setRulesJson: (value: string) => void;
+  ruleTypes: RuleType[];
+}) {
+  return (
+    <div className="two-column">
+      <section className="panel">
+        <div className="panel-heading">
+          <div>
+            <h2>Configure Rules</h2>
+            <p>Edit the seed rules or replace them with your own rule set.</p>
+          </div>
+        </div>
+        <textarea
+          aria-label="Rules JSON"
+          className="json-editor tall"
+          onChange={(event) => setRulesJson(event.target.value)}
+          spellCheck={false}
+          value={rulesJson}
+        />
+      </section>
+
+      <aside className="panel">
+        <h2>Rule Builder Shell</h2>
+        <div className="form-grid">
+          <label>
+            <span>Rule ID</span>
+            <input placeholder="reference-required" />
+          </label>
+          <label>
+            <span>Path</span>
+            <input placeholder="addresses.delivery.postcode" />
+          </label>
+          <label>
+            <span>Type</span>
+            <select defaultValue="required">
+              {ruleTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            <span>Severity</span>
+            <select defaultValue="error">
+              {severities.map((severity) => (
+                <option key={severity} value={severity}>
+                  {severity}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            <span>Value</span>
+            <input placeholder="25000, ^[A-Z0-9-]+$, chilled" />
+          </label>
+          <label>
+            <span>Message</span>
+            <input placeholder="Reference is required before export." />
+          </label>
+          <label>
+            <span>When path</span>
+            <input placeholder="serviceLevel" />
+          </label>
+          <label>
+            <span>When equals</span>
+            <input placeholder="temperature_controlled" />
+          </label>
+        </div>
+        <button className="secondary full-width" disabled type="button">
+          Add Rule
+        </button>
+        <div className="chip-list" aria-label="Rule types">
+          {ruleTypes.map((type) => (
+            <span className="chip" key={type}>
+              {type}
+            </span>
+          ))}
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+function InputTab({
+  ordersJson,
+  setOrdersJson,
+}: {
+  ordersJson: string;
+  setOrdersJson: (value: string) => void;
+}) {
+  return (
+    <div className="two-column input-layout">
+      <section className="panel">
+        <div className="panel-heading">
+          <div>
+            <h2>Input JSON</h2>
+            <p>Paste an array of extracted orders and evaluate it against the rules.</p>
+          </div>
+        </div>
+        <textarea
+          aria-label="Orders JSON"
+          className="json-editor tall"
+          onChange={(event) => setOrdersJson(event.target.value)}
+          spellCheck={false}
+          value={ordersJson}
+        />
+      </section>
+
+      <aside className="panel">
+        <h2>Customer Lookup</h2>
+        <pre>{JSON.stringify(customers, null, 2)}</pre>
+      </aside>
+    </div>
+  );
+}
+
+function ResultsTab({
+  counts,
+  results,
+}: {
+  counts: Record<"valid" | "warning" | "blocked", number>;
+  results: OrderEvaluation[] | null;
+}) {
+  return (
+    <section className="panel">
+        <div className="panel-heading">
+          <div>
+            <h2>Output</h2>
+          <p>Raw evaluator response.</p>
+          </div>
+        </div>
+
+      <div className="summary-grid" aria-label="Result summary">
         <SummaryTile label="Valid" value={counts.valid} />
         <SummaryTile label="Warnings" value={counts.warning} />
         <SummaryTile label="Blocked" value={counts.blocked} />
-        <SummaryTile label="Exportable" value={exportPayload.length} />
-      </section>
+      </div>
 
-      <section className="workspace">
-        <aside className="inbox" aria-label="Orders">
-          <div className="panel-heading">
-            <h2>Orders</h2>
-            <button onClick={resetOrders} type="button">
-              Reset
-            </button>
-          </div>
-          <div className="document-list">
-            {orders.map((order) => {
-              const evaluation = evaluations.find((item) => item.orderId === order.id);
-              return (
-                <button
-                  className={order.id === selectedId ? "document active" : "document"}
-                  key={order.id}
-                  onClick={() => selectOrder(order)}
-                  type="button"
-                >
-                  <span>{order.id}</span>
-                  <small>
-                    {String(order.customerCode ?? "unknown")} ·{" "}
-                    {String(order.reference ?? "no reference")}
-                  </small>
-                  <StatusBadge status={evaluation?.status ?? "blocked"} />
-                </button>
-              );
-            })}
-          </div>
-        </aside>
-
-        <section className="document-view" aria-label="Selected order">
-          {selected && selectedEvaluation ? (
-            <>
-              <div className="panel-heading document-heading">
-                <div>
-                  <h2>{selected.id}</h2>
-                  <span>{customerName(selected.customerCode)}</span>
-                </div>
-                <StatusBadge status={selectedEvaluation.status} />
-              </div>
-
-              <div className="document-grid">
-                <article className="source-panel">
-                  <div className="section-heading">
-                    <h3>Order JSON</h3>
-                    <button onClick={applyJson} type="button">
-                      Apply JSON
-                    </button>
-                  </div>
-                  <textarea
-                    className="json-editor"
-                    onChange={(event) => setDraftJson(event.target.value)}
-                    spellCheck={false}
-                    value={draftJson}
-                  />
-                  {jsonError ? <p className="error-banner">{jsonError}</p> : null}
-                </article>
-
-                <IssuesPanel evaluation={selectedEvaluation} />
-
-                <article>
-                  <h3>Rule results</h3>
-                  <RuleResultsTable evaluation={selectedEvaluation} />
-                </article>
-
-                <article className="export-panel">
-                  <h3>Export preview</h3>
-                  {exportPayload.length ? (
-                    <pre>{JSON.stringify(exportPayload, null, 2)}</pre>
-                  ) : (
-                    <p className="empty">No orders are currently valid for export.</p>
-                  )}
-                </article>
-              </div>
-            </>
-          ) : (
-            <p className="empty">No order selected.</p>
-          )}
-        </section>
-      </section>
-
-      <section className="notes-grid">
-        <article>
-          <h3>Known starter gaps</h3>
-          <ul className="plain-list">
-            <li>`max` and `oneOf` rules are not implemented yet.</li>
-            <li>Nested paths like `addresses.delivery.postcode` do not work yet.</li>
-            <li>Conditional rule explanations are minimal.</li>
-            <li>Edits live in memory unless the optional backend stretch is wired.</li>
-          </ul>
-        </article>
-        <article>
-          <h3>Customer lookup</h3>
-          <pre>{JSON.stringify(customers, null, 2)}</pre>
-        </article>
-      </section>
-    </main>
+      {results ? (
+        <textarea
+          aria-label="Evaluation output"
+          className="json-editor output"
+          readOnly
+          value={JSON.stringify(results, null, 2)}
+        />
+      ) : (
+        <p className="empty">Run evaluation to see rule results.</p>
+      )}
+    </section>
   );
 }
 
@@ -188,76 +292,33 @@ function SummaryTile({ label, value }: { label: string; value: number }) {
   );
 }
 
-function IssuesPanel({ evaluation }: { evaluation: OrderEvaluation }) {
-  const issues = evaluation.results.filter(
-    (result) => result.status === "fail" || result.status === "unsupported",
-  );
-
+function TabButton({
+  active,
+  children,
+  onClick,
+}: {
+  active: boolean;
+  children: ReactNode;
+  onClick: () => void;
+}) {
   return (
-    <article>
-      <h3>Issues</h3>
-      {issues.length === 0 ? (
-        <p className="empty success">No issues found.</p>
-      ) : (
-        <ul className="issue-list">
-          {issues.map((issue) => (
-            <li className={issue.severity} key={issue.ruleId}>
-              <strong>{issue.path}</strong>
-              <span>{issue.message}</span>
-              <code>actual: {JSON.stringify(issue.actual)}</code>
-            </li>
-          ))}
-        </ul>
-      )}
-    </article>
+    <button
+      aria-pressed={active}
+      className={active ? "tab active" : "tab"}
+      onClick={onClick}
+      type="button"
+    >
+      {children}
+    </button>
   );
 }
 
-function RuleResultsTable({ evaluation }: { evaluation: OrderEvaluation }) {
-  return (
-    <div className="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Rule</th>
-            <th>Path</th>
-            <th>Status</th>
-            <th>Actual</th>
-          </tr>
-        </thead>
-        <tbody>
-          {evaluation.results.map((result) => (
-            <tr key={result.ruleId}>
-              <td>{result.ruleId}</td>
-              <td>{result.path}</td>
-              <td>
-                <span className={`result ${result.status}`}>{result.status}</span>
-              </td>
-              <td>{JSON.stringify(result.actual)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+function parseJsonArray<T>(value: string, label: string): T[] {
+  const parsed = JSON.parse(value) as unknown;
 
-function StatusBadge({ status }: { status: OrderStatus }) {
-  return <span className={`status ${status}`}>{status}</span>;
-}
+  if (!Array.isArray(parsed)) {
+    throw new Error(`${label} must be a JSON array.`);
+  }
 
-function countStatuses(evaluations: OrderEvaluation[]) {
-  return evaluations.reduce<Record<OrderStatus, number>>(
-    (summary, evaluation) => {
-      summary[evaluation.status] += 1;
-      return summary;
-    },
-    { valid: 0, warning: 0, blocked: 0 },
-  );
+  return parsed as T[];
 }
-
-function customerName(code: unknown) {
-  const customer = customers.find((item) => item.code === code);
-  return customer ? `${customer.name} (${customer.code})` : String(code ?? "unknown");
-}
-

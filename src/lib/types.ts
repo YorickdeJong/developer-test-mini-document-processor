@@ -1,4 +1,14 @@
 export type Severity = "error" | "warning";
+export type RuleType =
+  | "required"
+  | "number"
+  | "min"
+  | "max"
+  | "minLength"
+  | "maxLength"
+  | "oneOf"
+  | "regex"
+  | "date";
 
 export type Order = {
   id: string;
@@ -13,7 +23,9 @@ export type Customer = {
 
 export type RuleCondition = {
   path: string;
-  equals: unknown;
+  equals?: unknown;
+  notEquals?: unknown;
+  oneOf?: unknown[];
 };
 
 type BaseRule = {
@@ -26,6 +38,10 @@ type BaseRule = {
 
 export type RequiredRule = BaseRule & {
   type: "required";
+};
+
+export type NumberRule = BaseRule & {
+  type: "number";
 };
 
 export type MinRule = BaseRule & {
@@ -43,7 +59,30 @@ export type OneOfRule = BaseRule & {
   values: unknown[];
 };
 
-export type Rule = RequiredRule | MinRule | MaxRule | OneOfRule;
+export type LengthRule = BaseRule & {
+  type: "minLength" | "maxLength";
+  value: number;
+};
+
+export type RegexRule = BaseRule & {
+  type: "regex";
+  pattern: string;
+};
+
+export type DateRule = BaseRule & {
+  type: "date";
+  format?: "iso";
+};
+
+export type Rule =
+  | RequiredRule
+  | NumberRule
+  | MinRule
+  | MaxRule
+  | LengthRule
+  | OneOfRule
+  | RegexRule
+  | DateRule;
 
 export type RuleResult = {
   ruleId: string;
@@ -62,4 +101,3 @@ export type OrderEvaluation = {
   status: OrderStatus;
   results: RuleResult[];
 };
-

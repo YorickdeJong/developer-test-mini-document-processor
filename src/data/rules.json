@@ -22,6 +22,14 @@
     "message": "Reference is required before export."
   },
   {
+    "id": "reference-max-length",
+    "type": "maxLength",
+    "path": "reference",
+    "value": 16,
+    "severity": "warning",
+    "message": "Reference should be short enough for the export system."
+  },
+  {
     "id": "pickup-date-required",
     "type": "required",
     "path": "pickupDate",
@@ -29,11 +37,34 @@
     "message": "Pickup date is required."
   },
   {
+    "id": "pickup-date-format",
+    "type": "date",
+    "path": "pickupDate",
+    "format": "iso",
+    "severity": "error",
+    "message": "Pickup date must use YYYY-MM-DD."
+  },
+  {
     "id": "delivery-postcode-required",
     "type": "required",
     "path": "addresses.delivery.postcode",
     "severity": "error",
     "message": "Delivery postcode is required."
+  },
+  {
+    "id": "postcode-basic-shape",
+    "type": "regex",
+    "path": "addresses.delivery.postcode",
+    "pattern": "^[A-Z0-9][A-Z0-9 -]{2,10}$",
+    "severity": "warning",
+    "message": "Delivery postcode looks unusual."
+  },
+  {
+    "id": "weight-number",
+    "type": "number",
+    "path": "weightKg",
+    "severity": "error",
+    "message": "Weight must be numeric."
   },
   {
     "id": "weight-positive",
@@ -60,6 +91,14 @@
     "message": "At least one pallet is required."
   },
   {
+    "id": "service-level-known",
+    "type": "oneOf",
+    "path": "serviceLevel",
+    "values": ["standard", "temperature_controlled", "express"],
+    "severity": "warning",
+    "message": "Service level is not recognized."
+  },
+  {
     "id": "temperature-known",
     "type": "oneOf",
     "path": "temperature",
@@ -76,4 +115,3 @@
     "when": { "path": "serviceLevel", "equals": "temperature_controlled" }
   }
 ]
-

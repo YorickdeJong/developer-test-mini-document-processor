@@ -2,9 +2,9 @@
 
 This is a 60-minute developer test starter repo.
 
-You are building a small workbench for validating extracted logistics orders before
-export. The repo intentionally uses local JSON inputs for the core task: no database,
-no external services, and no required API calls.
+You are building a small workbench for validating extracted logistics order JSON
+before export. The repo intentionally uses local JSON inputs for the core task:
+no database, no external services, and no required API calls.
 
 You may use Claude Code, Codex, multiple agents, documentation, search, and any
 reasonable local tools. You may ask the interviewer questions while working.
@@ -27,37 +27,49 @@ Run tests:
 pnpm test:run
 ```
 
+## Product Goal
+
+Build a workbench with three useful areas:
+
+1. **Configure Rules** - create, edit, delete, and inspect validation rules.
+2. **Input JSON** - paste or edit an array of extracted order payloads.
+3. **Results** - evaluate the input against the configured rules and show what
+   passes, warns, or blocks export.
+
+The starter UI has these sections, seed data, a partial evaluator, and a small
+test setup. It is deliberately incomplete.
+
 ## Core Scope
 
-Build the best coherent slice you can. The starter already has a Next.js UI,
-seed orders, seed rules, a partial rule evaluator, and a few passing tests.
+Build the best coherent slice you can.
 
-1. **Order Overview**
-   - Show all orders.
-   - Show status: `valid`, `warning`, or `blocked`.
-   - Make it easy to see which orders are exportable.
+1. **Rule configuration**
+   - Let the user configure rules in the UI.
+   - Support practical rule fields: `id`, `path`, `type`, `severity`, `message`,
+     and type-specific values.
+   - Include useful rule types such as `required`, `number`, `min`, `max`,
+     `minLength`, `maxLength`, `oneOf`, `regex`, and `date`.
+   - Support optional `when` conditions if time allows.
 
-2. **Rule Evaluation**
+2. **JSON input**
+   - Let the user paste/edit order JSON.
+   - Show parse errors clearly.
+   - Preserve user input while they iterate.
+
+3. **Rule evaluation**
    - Improve `src/lib/evaluateRules.ts`.
-   - Support required fields.
-   - Support min/max numbers.
-   - Support allowed values via `oneOf`.
-   - Support simple conditional rules with `when`.
    - Support nested paths like `addresses.delivery.postcode`.
+   - Return useful result details: status, path, severity, message, actual value,
+     expected value, and skipped conditional rules where relevant.
 
-3. **Operator Review**
-   - Show per-order rule results.
-   - Show severity, field/path, message, and actual value.
-   - Let the user edit an order and rerun validation.
-   - Make failure reasons understandable to an operator.
-
-4. **Export**
-   - Generate export-ready JSON for valid orders only.
-   - Keep the export shape clean and predictable.
+4. **Readable output**
+   - Show per-order status: `valid`, `warning`, or `blocked`.
+   - Make failed rules understandable to an operator.
+   - Make it easy to see which orders are exportable.
 
 5. **Verification**
    - Add or improve at least one meaningful automated test for the rule engine,
-     export behavior, or an edge case you fixed.
+     JSON handling, export behavior, or an edge case you fixed.
    - Leave a short note in this README or a new `NOTES.md` explaining what works,
      what is unfinished, and how you used agents.
 
@@ -65,14 +77,14 @@ seed orders, seed rules, a partial rule evaluator, and a few passing tests.
 
 Only do these after the core flow works:
 
+- Add rule add/edit/delete forms instead of only JSON editing.
 - Group issues by field/path.
-- Add filtering by customer/status/severity.
+- Add filtering by status/severity/customer.
 - Explain why a conditional rule triggered or skipped.
 - Add fix suggestions.
-- Add a rule editor.
-- Add date validation.
-- Add batch export controls.
-- Improve the visual hierarchy and empty states.
+- Export valid orders only.
+- Persist rules or input through the optional backend routes.
+- Improve visual hierarchy and empty states.
 
 ## Backend Stretch
 
@@ -90,13 +102,12 @@ simple file-backed store, not a database.
 ## Existing Starter
 
 - `src/data/orders.json` contains extracted order payloads.
-- `src/data/rules.json` contains validation rules.
+- `src/data/rules.json` contains validation rule examples.
 - `src/data/customers.json` contains customer lookup data.
-- `src/components/RulesWorkbench.tsx` renders the workbench.
+- `src/components/RulesWorkbench.tsx` renders the starter workbench shell.
 - `src/lib/evaluateRules.ts` contains the partial evaluator.
-- `src/lib/exportOrders.ts` builds the export payload.
+- `src/lib/exportOrders.ts` builds an export payload from valid orders.
 - `src/lib/__tests__/evaluateRules.test.ts` shows the test setup.
 - `src/app/api/**` contains the optional backend stretch routes.
 
 You may change any of this.
-

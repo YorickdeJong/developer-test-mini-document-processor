@@ -22,15 +22,19 @@ Weak signals:
 
 Strong signals:
 
+- Rules can be configured from the UI, not only hardcoded.
+- Input JSON can be pasted, edited, parsed, and evaluated.
 - Orders clearly show valid/warning/blocked status.
 - Rule results are understandable and grounded in actual values.
-- Editing an order reruns validation.
+- Editing rules or input reruns validation.
 - Export output includes only valid orders.
 - The workflow is coherent even if small.
 
 Weak signals:
 
 - Mostly static UI.
+- Rule configuration is ignored by the evaluator.
+- JSON parse errors are confusing or crash the app.
 - Statuses do not reflect the rules.
 - Export ignores validation.
 
@@ -42,6 +46,7 @@ Strong signals:
 - Separates domain logic from React rendering.
 - Uses clear TypeScript types.
 - Handles missing, malformed, and nested data deliberately.
+- Models type-specific rule settings cleanly.
 - Avoids hardcoding sample-order-specific fixes.
 
 Weak signals:
@@ -84,4 +89,3 @@ Strong signals:
 - UI is readable and task-focused.
 - Labels and validation messages are understandable.
 - The final handoff notes are concise.
-
