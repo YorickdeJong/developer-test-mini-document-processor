@@ -7,7 +7,20 @@ export function buildExportPayload(
   return {
     sourceDocumentId: document.id,
     exportedAt: new Date().toISOString(),
-    data: fields,
+    data: {
+      customer: clean(fields.customer),
+      referenceNumber: clean(fields.referenceNumber),
+      pickupDate: clean(fields.pickupDate),
+      deliveryAddress: clean(fields.deliveryAddress),
+      weightKg:
+        fields.weightKg === undefined || String(fields.weightKg).trim() === ""
+          ? null
+          : Number(fields.weightKg),
+    },
   };
+}
+
+function clean(value: string | undefined) {
+  return value?.trim() || null;
 }
 

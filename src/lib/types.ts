@@ -13,6 +13,16 @@ export type ExtractedFields = {
   weightKg?: number | string;
 };
 
+export type DocumentStatus = "new" | "needs_review" | "ready" | "exported";
+
+export type DocumentRecord = {
+  source: SourceDocument;
+  fields: ExtractedFields;
+  approved: boolean;
+  exported: boolean;
+  reviewNote: string;
+};
+
 export type ValidationIssue = {
   field: keyof ExtractedFields;
   message: string;
@@ -24,3 +34,4 @@ export type ValidationResult = {
   issues: ValidationIssue[];
 };
 
+export type FieldName = keyof ExtractedFields;
