@@ -39,6 +39,14 @@ Build a workbench with three useful areas:
 The starter UI has these sections, seed data, a partial evaluator, and a small
 test setup. It is deliberately incomplete.
 
+## Constraints
+
+- Stay in this Next.js/TypeScript project.
+- Do not add auth, accounts, deployment, or external API dependencies.
+- A database is not required for the core task.
+- Prefer a coherent working slice over many unfinished ideas.
+- Keep enough time at the end to run checks and explain your result.
+
 ## Core Scope
 
 Build the best coherent slice you can.
@@ -70,8 +78,17 @@ Build the best coherent slice you can.
 5. **Verification**
    - Add or improve at least one meaningful automated test for the rule engine,
      JSON handling, export behavior, or an edge case you fixed.
-   - Leave a short note in this README or a new `NOTES.md` explaining what works,
-     what is unfinished, and how you used agents.
+   - Leave a short note in this README or a new `NOTES.md`.
+
+## Handoff
+
+Before the session ends, write a short note covering:
+
+- what works,
+- what is unfinished,
+- what checks you ran,
+- how you used agents,
+- what you would do next with more time.
 
 ## Stretch Goals
 
