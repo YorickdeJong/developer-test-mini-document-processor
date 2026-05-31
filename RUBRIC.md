@@ -24,6 +24,7 @@ Strong signals:
 
 - A user can open documents, see extracted fields, understand validation issues,
   edit fields, approve valid documents, and view export JSON.
+- Edits persist through the API/backend, not only in component state.
 - The app handles at least the obvious bad documents.
 - The workflow is coherent even if small.
 
@@ -38,6 +39,8 @@ Weak signals:
 Strong signals:
 
 - Separates extraction, validation, state, and rendering.
+- Keeps server/database code separate from client UI code.
+- Designs API route behavior clearly.
 - Uses clear types.
 - Keeps logic deterministic and inspectable.
 - Handles edge cases without broad catch-all behavior.
@@ -82,4 +85,3 @@ Strong signals:
 - UI is readable and task-focused.
 - Labels and validation messages are understandable.
 - The final handoff notes are concise.
-

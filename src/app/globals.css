@@ -32,6 +32,11 @@ button {
   padding: 8px 12px;
 }
 
+.button-row {
+  display: flex;
+  gap: 8px;
+}
+
 button:disabled {
   background: #c6cac7;
   color: #68706d;
@@ -116,6 +121,16 @@ h3 {
   display: grid;
   gap: 20px;
   grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+}
+
+.error-banner {
+  background: #fff0ed;
+  border: 1px solid #f0a094;
+  border-radius: 8px;
+  color: #8c2517;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding: 12px 14px;
 }
 
 .inbox,
@@ -305,6 +320,12 @@ textarea {
   color: #1d6b3f;
 }
 
+.hint {
+  color: #60706d;
+  font-size: 13px;
+  margin: 10px 0 0;
+}
+
 .status {
   border-radius: 999px;
   display: inline-flex;
@@ -360,4 +381,3 @@ textarea {
     grid-template-columns: 1fr;
   }
 }
-

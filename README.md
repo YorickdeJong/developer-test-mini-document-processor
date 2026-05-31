@@ -2,10 +2,11 @@
 
 This is a 60-minute developer test starter repo.
 
-You are building a small local app that processes messy incoming order documents.
-The starter already includes a document inbox, editable review form, validation
-panel, export preview, and basic status tracking. Your job is to turn this into a
-coherent, trustworthy document-processing workflow.
+You are building a small full-stack app that processes messy incoming order
+documents. The starter already includes a Next.js UI, API routes, a local SQLite
+database, seed data, an editable review form, validation panel, export preview,
+and basic status tracking. Your job is to turn this into a coherent, trustworthy
+document-processing workflow.
 
 You may use Claude Code, Codex, multiple agents, documentation, search, and any
 reasonable local tools. You may ask the interviewer questions while working.
@@ -19,6 +20,7 @@ plan, split work, verify, and make tradeoffs.
 
 ```bash
 pnpm install
+pnpm db:setup
 pnpm dev
 ```
 
@@ -26,6 +28,13 @@ Run tests:
 
 ```bash
 pnpm test:run
+```
+
+The database is a local SQLite file at `data/dev.db`. It is generated from the
+seed documents and is intentionally ignored by git. Reset it anytime with:
+
+```bash
+pnpm db:reset
 ```
 
 ## Core Scope
@@ -56,10 +65,12 @@ partially; improve the parts that matter most.
    - Let a user edit extracted fields.
    - Let a user approve a document only when it is valid.
    - Make the review experience clear enough that an operator can trust it.
+   - Persist edits through the API/database.
 
 5. **Export**
    - Show or download JSON for approved documents.
    - Ensure exported values are cleanly typed.
+   - Keep the export operation server-backed.
 
 6. **Verification**
    - Add or improve at least one meaningful automated test for extraction,
@@ -78,13 +89,20 @@ Only do these after the core flow works:
 - Side-by-side original document and editable extraction form.
 - "Why flagged?" explanations.
 - Markdown operations summary.
-- Persist changes in local storage.
+- Add filtering by status or validation issue.
+- Add review history from the database.
+- Add a batch export API route.
+- Add an endpoint or page for review events.
 - Add a second document type.
 
 ## Existing Starter
 
 - `src/data/documents.json` contains the messy source documents.
-- `src/App.tsx` wires the document inbox, review form, validation panel, and export preview.
+- `src/app/page.tsx` renders the document processor.
+- `src/components/DocumentProcessor.tsx` wires the document inbox, review form, validation panel, and export preview.
+- `src/app/api/documents/**` contains the Next.js API routes.
+- `src/server/db.ts` sets up the local SQLite database.
+- `src/server/documents.ts` contains the server-side document persistence helpers.
 - `src/lib/extraction.ts` contains basic deterministic extraction that intentionally misses edge cases.
 - `src/lib/validation.ts` contains a partial validation implementation.
 - `src/lib/status.ts` derives document status from review/export state.
